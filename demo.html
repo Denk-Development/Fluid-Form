@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Fluid form demo page</title>
+		<meta charset="utf-8">
+
+		<link href="fluid-form.css" rel="stylesheet">
+
+		<style type="text/css">
+			#demo-fluid-form-wrapper {
+				text-align: center;
+				padding-bottom: 20vh;
+			}
+
+			#demo-fluid-form-wrapper > div {
+				margin: 10vh 0;
+				padding: 10vh 0;
+				opacity: 0.5;
+				transition: opacity 0.2s ease-in 0s;
+			}
+
+			#demo-fluid-form-wrapper > div.active {
+				opacity: 1;
+			}
+		</style>
+	</head>
+	<body>
+		<section id="demo-fluid-form-wrapper" class="fluid-form-wrapper">
+			<div>
+				<h1>Question 1</h1>
+				<p>Enter something random!</p>
+				<input type="text"/>
+				<input type="button" class="fluid-form-next-button" value="Next"/>
+			</div>
+			
+			<div>
+				<h1>Question 2</h1>
+				<p>Enter something random!</p>
+				<input type="text"/>
+				<input type="button" class="fluid-form-next-button" value="Next"/>
+			</div>
+			
+			<div>
+				<h1>Question 3</h1>
+				<p>Enter something random!</p>
+				<input type="text"/>
+				<input type="button" class="fluid-form-next-button" value="Next"/>
+			</div>
+			
+			<div>
+				<h1>You made it!</h1>
+				<p>Just hit the button below...</p>
+				<input type="button" class="fluid-form-submit-button" value="Submit"/>
+			</div>
+		</section>
+
+
+    	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script type="text/javascript" src="fluid-form.js"></script>
+		<script type="text/javascript">
+			(function() {
+				var demoFluidForm = new FluidForm($('#demo-fluid-form-wrapper'));
+			})();
+		</script>
+	</body>
+</head>
