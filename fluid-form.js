@@ -2,13 +2,13 @@ function FluidForm(wrapper, callback) {
 	var self = this;
 
 	if (typeof wrapper === 'undefined') throw new Error("No reference to a wrapper element passed.");
-	if (typeof callback === 'undefined') callback = function() {};
+	if (typeof callback !== 'function') throw new Error("No submit callback function passed.");
 
 	this.wrapper = wrapper;
 	this.callback = callback;
 	this.questions = this.wrapper.find('.fluid-form-question');
 	this.inputFields = this.wrapper.find(FluidForm.inputFieldsSelector);
-	this.requiredInputFields = this.inputFields.filter('[required="required"]');
+	this.requiredInputFields = this.inputFields.filter(FluidForm.requiredSelector);
 
 	if (this.questions.length === 0) throw new Error("Wrapper element doesn't contain any child elements.");
 
@@ -33,16 +33,15 @@ function FluidForm(wrapper, callback) {
 	});
 
 	this.wrapper.find('.fluid-form-submit-button').on('click', function(e) { 
-		e.preventDefault();
-		e.stopPropagation();
 		self.submit(); 
 	});
 
 	this.questions.on('click', function() {
 		var index = self.questions.index(this);
-		if (index === -1) return;
+		if (index === -1 || self.activeIndex === index) return;
 
-		self.scrollToIndex(index);
+        // not working for questions which are higher than the screen size
+		//self.scrollToIndex(index);
 	});
 
 	this.setQuestionIndex(0);
@@ -51,18 +50,20 @@ function FluidForm(wrapper, callback) {
 }
 
 FluidForm.scrollOffsetTop = 70;
+FluidForm.scrollOffsetBottom = 70;
 FluidForm.scrollPaddingTop = 50;
 
 FluidForm.inputFieldsSelector = 'input[type=text], input[type=mail], input[type=number], textarea';
+FluidForm.requiredSelector = '[required="required"]';
 
 FluidForm.prototype.activeIndex = 0;
 FluidForm.prototype.wrapper = null;
 FluidForm.prototype.questions = [];
 
 FluidForm.prototype.nextQuestion = function() {
-	// check if all required fields are filled
+    // check if all required fields are filled
 	var invalidFieldFound = false;
-	var inputFields = this.questions.eq(this.activeIndex).find(FluidForm.inputFieldsSelector);
+	var inputFields = this.questions.eq(this.activeIndex).find(FluidForm.inputFieldsSelector).filter(FluidForm.requiredSelector);
 	for (var i = 0; i < inputFields.length; i++) {
 		if (!inputFields.eq(i).val()) {
 			invalidFieldFound = true;
@@ -101,9 +102,13 @@ FluidForm.prototype.submit = function() {
 };
 
 FluidForm.prototype.handleScrolling = function() {
-	var scrollTop = $(window).scrollTop();
+	var scrollTop = $(window).scrollTop(), screenHeight = $(window).height();
 	for (var i = 0; i < this.questions.length; i++) {
-		if (this.questions.eq(i).offset().top - scrollTop - FluidForm.scrollOffsetTop >= 0) {
+        var screenMid = scrollTop + screenHeight / 2, 
+            questionTop = this.questions.eq(i).offset().top, 
+            questionBottom = questionTop + this.questions.eq(i).height();
+        
+        if (questionTop < screenMid && questionBottom > screenMid) {
 			if (this.activeIndex !== i) {
 				this.setQuestionIndex(i);
 			}
