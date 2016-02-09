@@ -46,7 +46,7 @@ function FluidForm(wrapper, callback) {
 
 	this.setQuestionIndex(0);
 
-	$(window).on('scroll', function() { self.handleScrolling(); }).trigger('scroll');
+	$(window).on('scroll resize', function() { self.handleScrolling(); }).trigger('scroll');
 }
 
 FluidForm.scrollOffsetTop = 70;
@@ -93,7 +93,7 @@ FluidForm.prototype.setQuestionIndex = function(index) {
 FluidForm.prototype.submit = function() {
 	for (var i = 0; i < this.requiredInputFields.length; i++) {
 		if (!this.requiredInputFields.eq(i).val()) {
-			this.requiredInputFields.eq(i).focus();
+			this.requiredInputFields.eq(i).focus().addClass('missing');
 			return;
 		}
 	}
@@ -118,5 +118,9 @@ FluidForm.prototype.handleScrolling = function() {
 };
 
 FluidForm.prototype.scrollToIndex = function(index) {
-	$('html, body').animate({ scrollTop: this.questions.eq(index).offset().top - FluidForm.scrollOffsetTop - FluidForm.scrollPaddingTop }, 1000);
+	$('html, body').animate({ scrollTop: this.questions.eq(index).offset().top + FluidForm.scrollOffsetTop - $(window).height() / 2 }, 1000);
+};
+
+FluidForm.prototype.scrollToId = function(id) {
+	$('html, body').animate({ scrollTop: $('#' + id).offset().top - FluidForm.scrollOffsetTop - FluidForm.scrollPaddingTop }, 1000);
 };
